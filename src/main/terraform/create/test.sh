@@ -1,0 +1,1 @@
+terraform plan -var-file=envParams/vmm.tfvars && terraform apply -var-file=envParams/vmm.tfvars

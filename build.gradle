@@ -1,0 +1,40 @@
+group = 'jeckzang'
+
+ext{
+	artifactVersion = "1.0.0"
+	projectBaseName = 'devops'
+}
+
+buildscript {
+	repositories {
+		mavenLocal()
+		maven { url "http://pctcrepo.polycom.com:8081/artifactory/pdms-all/" }
+	}
+	dependencies {
+		classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.6.2"
+		classpath "se.transmode.gradle:gradle-docker:1.2" 
+		classpath 'org.ajoberstar:gradle-git:1.7.2'
+	}
+}
+
+repositories {
+	mavenLocal()
+	maven { url "http://pctcrepo.polycom.com:8081/artifactory/pdms-all/" }
+}
+
+apply plugin: 'docker'
+apply plugin: 'base'
+
+task buildDocker(type: Docker) {
+	applicationName = project.projectBaseName
+	dockerfile = file('src/main/docker/Dockerfile')
+	doFirst {
+		copy {
+			from('src/main') {
+				exclude 'docker'
+			}
+			into stageDir
+		}
+	}
+}
+

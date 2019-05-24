@@ -39,7 +39,17 @@ vmkfstools -i ubuntu.vmdk template.vmdk
 
 create VM with a OS image
 1. install packer
-//TODO
+ENV PACKER_VERSION=1.4.1
+RUN wget https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip
+RUN unzip packer_${PACKER_VERSION}_linux_amd64.zip -d /usr/bin
+
+2. install Packer Builder for VMware vSphere
+RUN wget https://github.com/jetbrains-infra/packer-builder-vsphere/releases/download/${PACKER_BUILDER_VSPHERE_VERSION}/packer-builder-vsphere-iso.linux
+RUN mkdir -p ${HOME}/packer.d/plugins
+RUN mv packer-builder-vsphere-iso.linux ${HOME}/packer.d/plugins
+
+3. build image by packer
+https://medium.com/@ripon.banik/how-did-i-automate-builiding-vm-template-in-vsphere-and-run-the-vm-using-terraform-ansible-8dd302b31c25
 
 
 

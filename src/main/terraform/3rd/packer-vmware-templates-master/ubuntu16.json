@@ -1,0 +1,155 @@
+{
+  "variables": {
+    "guest_additions_mode": "disable",
+    "headless": "false",
+    "vm_name": "packer-build-ubuntu-18042",
+    "disk_size": "61440",
+    "disk_type_id": "1",
+    "memory": "1024",
+    "cpu": "1",        
+    "iso_checksum_type": "sha256",
+    "iso_checksum": "ea6ccb5b57813908c006f42f7ac8eaa4fc603883a2d07876cf9ed74610ba2f53",
+    "iso_url":"iso/ubuntu-18.04.2-live-server-amd64.iso",
+    "vcenter_server": "",
+    "vcenter_datacenter": "",
+    "vcenter_cluster": "",
+    "vcenter_datastore": "",
+    "vcenter_host": "",
+    "vcenter_network": "",
+    "vcenter_username": "",
+    "vcenter_password": ""    
+  },
+  "builders": [
+   {
+      "name": "ubuntu-18042-vsphere",
+      "type": "vsphere-iso",
+      "vcenter_server":      "{{ user `vcenter_server` }}",
+      "datacenter":          "{{ user `vcenter_datacenter` }}",
+      "username":            "{{ user `vcenter_username` }}",
+      "password":            "{{ user `vcenter_password` }}",
+      "insecure_connection": true,     
+    
+      "vm_name": "{{user `vm_name`}}",
+      "host":    "{{ user `vcenter_host` }}",
+      "cluster": "{{ user `vcenter_cluster` }}",
+      "datastore" : "{{ user `vcenter_datastore` }}",
+
+      "communicator": "ssh",
+      "ssh_username": "vagrant",
+      "ssh_password": "vagrant",    
+      "ssh_port": 22,      
+      "boot_command": [
+        "<enter><wait><f6><wait><esc><wait>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs>",
+        "/install/vmlinuz",
+        " initrd=/install/initrd.gz",
+        " priority=critical",
+        " locale=en_US",
+        " file=/media/preseed.cfg",
+        "<enter>"
+      ],
+      "boot_wait": "10s",            
+      "ssh_username": "vagrant",
+      "ssh_password": "vagrant",            
+      "shutdown_command": "echo 'vagrant'|sudo -S /sbin/halt -h -p",
+
+      "guest_os_type": "ubuntu64Guest",
+      "vm_version" : 13,
+      "CPUs":"{{user `cpu`}}",
+      "CPU_limit": -1,
+      "RAM": "{{user `memory`}}",
+      "RAM_reserve_all": true,
+      "disk_controller_type": "lsilogic-sas",
+      "disk_size": "{{user `disk_size`}}",
+      "disk_thin_provisioned": false,
+      "network":  "{{ user `vcenter_network` }}",
+      "network_card" : "e1000e",  
+      "iso_paths": [
+        "[{{ user `vcenter_datastore` }}]/iso/ubuntu-18.04.2-live-server-amd64.iso"               
+      ],
+       "floppy_files": [
+        "./http/preseed.cfg"
+      ]   
+    },      
+    {
+      "name": "ubuntu-18042-vmware",
+      "type": "vmware-iso",
+       "boot_command": [
+        "<enter><wait>",
+        "<f6><esc>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs>",
+        "/install/vmlinuz ",
+        "initrd=/install/initrd.gz ",
+        "net.ifnames=0 ",
+        "auto-install/enable=true ",
+        "debconf/priority=critical ",
+        "preseed/url=http://{{.HTTPIP}}:{{.HTTPPort}}/preseed.cfg",
+        "<enter>"
+     ],
+      "boot_wait": "10s",
+      "disk_size": "{{user `disk_size`}}",
+      "headless": "{{ user `headless` }}",
+      "http_directory": "http",
+      "iso_urls": [
+        "{{ user `iso_url` }}",
+        "http://releases.ubuntu.com/18.04/ubuntu-18.04.2-live-server-amd64.iso"
+      ],
+      "iso_checksum_type": "{{ user `iso_checksum_type` }}",
+      "iso_checksum": "{{ user `iso_checksum` }}",
+      "ssh_username": "vagrant",
+      "ssh_password": "vagrant",
+      "ssh_port": 22,
+      "ssh_wait_timeout": "2h",
+      "shutdown_command": "echo 'vagrant'|sudo -S /sbin/halt -h -p",
+      "tools_upload_flavor": "linux",
+      "vm_name": "{{user `vm_name`}}",
+      "vmx_data": {
+        "memsize": "{{user `memory`}}",
+        "numvcpus": "{{user `cpu`}}"
+      }
+    }
+  ],
+  "provisioners": [    
+   {
+     "type": "shell",     
+     "execute_command": "echo 'vagrant' | {{.Vars}} sudo -S -E bash '{{.Path}}'",
+     "script": "scripts/cleanup.sh"
+   }
+  ],
+  "post-processors": [
+    {
+      "type": "vsphere",
+      "only": [ "ubuntu-18042-vmware" ],
+      "cluster": "{{ user `vcenter_cluster` }}",
+      "datacenter": "{{ user `vcenter_datacenter` }}",
+      "datastore": "{{ user `vcenter_datastore` }}",
+      "host": "{{ user `vcenter_host` }}",
+      "username": "{{ user `vcenter_username` }}",
+      "password": "{{ user `vcenter_password` }}",      
+      "disk_mode": "{{ user `disk_mode` }}",
+      "vm_network": "{{ user `vcenter_network` }}",     
+      "vm_name": "{{user `vm_name`}}",
+      "resource_pool": "",
+      "overwrite": "true",
+        "options": [
+         "--noSSLVerify"
+      ]
+    }
+  ]
+}

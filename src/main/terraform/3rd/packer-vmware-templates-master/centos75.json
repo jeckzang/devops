@@ -1,0 +1,131 @@
+{
+  "variables": {
+    "guest_additions_mode": "disable",
+    "headless": "false",
+    "vm_name": "packer-build-centos-75",
+    "disk_size": "61440",
+    "disk_type_id": "1",
+    "memory": "1024",
+    "cpu": "1",        
+    "iso_checksum_type": "sha256",
+    "iso_checksum": "714acc0aefb32b7d51b515e25546835e55a90da9fb00417fbee2d03a62801efd",
+    "iso_url":"iso/CentOS-7.5-x86_64-Minimal-1804.iso",
+    "vcenter_server": "",
+    "vcenter_datacenter": "",
+    "vcenter_cluster": "",
+    "vcenter_datastore": "",
+    "vcenter_host": "",
+    "vcenter_network": "",
+    "vcenter_username": "",
+    "vcenter_password": ""
+  },
+  "builders": [
+    {
+      "name": "centos-75-vsphere",
+      "type": "vsphere-iso",
+      "vcenter_server":      "{{ user `vcenter_server` }}",
+      "datacenter":          "{{ user `vcenter_datacenter` }}",
+      "username":            "{{ user `vcenter_username` }}",
+      "password":            "{{ user `vcenter_password` }}",
+      "insecure_connection": true,     
+    
+      "vm_name": "{{user `vm_name`}}",
+      "host":    "{{ user `vcenter_host` }}",
+      "cluster": "{{ user `vcenter_cluster` }}",
+      "datastore" : "{{ user `vcenter_datastore` }}",
+
+      "communicator": "ssh",
+      "ssh_username": "vagrant",
+      "ssh_password": "vagrant",    
+      "ssh_port": 22,      
+      "boot_command": [
+        "<tab> ",
+        "inst.ks=hd:/dev/fd0:/ks.cfg ",
+        "biosdevname=0 ",
+        "net.ifnames=0 ",
+        "<enter>"
+      ],
+      "boot_wait": "10s",            
+      "ssh_username": "vagrant",
+      "ssh_password": "vagrant",            
+      "shutdown_command": "echo 'vagrant'|sudo -S /sbin/halt -h -p",
+
+      "guest_os_type": "centos7_64Guest",
+      "vm_version" : 13,
+      "CPUs":"{{user `cpu`}}",
+      "CPU_limit": -1,
+      "RAM": "{{user `memory`}}",
+      "RAM_reserve_all": true,
+      "disk_controller_type": "lsilogic-sas",
+      "disk_size": "{{user `disk_size`}}",
+      "disk_thin_provisioned": false,
+      "network":  "{{ user `vcenter_network` }}",
+      "network_card" : "vmxnet3",
+  
+      "iso_paths": [
+        "[{{ user `vcenter_datastore` }}]ISOs/CentOS-7-x86_64-Minimal-1804.iso"               
+      ],
+       "floppy_files": [
+        "./http/ks.cfg"
+      ]   
+    },   
+    {
+      "type": "vmware-iso",
+      "name": "centos-75-vmware",
+      "boot_command": [
+        "<tab> text ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg<enter><wait>"
+      ],
+      "boot_wait": "10s",
+      "disk_size": "{{user `disk_size`}}",
+      "headless": "{{ user `headless` }}",
+      "http_directory": "http",
+      "iso_urls": [
+        "{{ user `iso_url` }}",
+        "http://mirrors.mit.edu/centos/7/isos/x86_64/CentOS-7-x86_64-Minimal-1804.iso"
+      ],
+      "iso_checksum_type": "{{ user `iso_checksum_type` }}",
+      "iso_checksum": "{{ user `iso_checksum` }}",
+      "ssh_username": "vagrant",
+      "ssh_password": "vagrant",
+      "ssh_port": 22,
+      "ssh_wait_timeout": "2h",
+      "shutdown_command": "echo 'vagrant'|sudo -S /sbin/halt -h -p",
+      "tools_upload_flavor": "linux",
+      "vm_name": "{{user `vm_name`}}",
+      "vmx_data": {
+        "memsize": "{{user `memory`}}",
+        "numvcpus": "{{user `cpu`}}"
+      }
+    }    
+  ],
+  "provisioners": [   
+   {
+     "type": "shell",
+     "execute_command": "echo 'vagrant' | {{.Vars}} sudo -S -E bash '{{.Path}}'",
+     "scripts": [
+       "scripts/cleanup.sh"
+      ] 
+
+   }
+  ],
+  "post-processors": [
+    {
+      "type": "vsphere",
+      "only": [ "centos-75-vmware" ],
+      "cluster": "{{ user `vcenter_cluster` }}",
+      "datacenter": "{{ user `vcenter_datacenter` }}",
+      "datastore": "{{ user `vcenter_datastore` }}",
+      "host": "{{ user `vcenter_host` }}",
+      "username": "{{ user `vcenter_username` }}",
+      "password": "{{ user `vcenter_password` }}",      
+      "disk_mode": "{{ user `disk_mode` }}",
+      "vm_network": "{{ user `vcenter_network` }}",     
+      "vm_name": "{{user `vm_name`}}",
+      "resource_pool": "",
+      "overwrite": "true",
+        "options": [
+         "--noSSLVerify"
+      ]
+    }
+  ]
+}

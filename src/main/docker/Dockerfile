@@ -24,17 +24,25 @@ RUN wget https://releases.hashicorp.com/terraform/${TERRORFORM_VERSION}/terrafor
 RUN unzip terraform_${TERRORFORM_VERSION}_linux_amd64.zip -d /usr/bin
 
 ENV PACKER_VERSION=1.4.1
+ENV HOME=/root
 RUN wget https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip
 RUN unzip packer_${PACKER_VERSION}_linux_amd64.zip -d /usr/bin
+
+
+ENV PACKER_BUILDER_VSPHERE_VERSION=v2.3
+RUN wget https://github.com/jetbrains-infra/packer-builder-vsphere/releases/download/${PACKER_BUILDER_VSPHERE_VERSION}/packer-builder-vsphere-iso.linux
+RUN mkdir -p ${HOME}/packer.d/plugins
+RUN mv packer-builder-vsphere-iso.linux ${HOME}/packer.d/plugins
+
 
 
 # vSphere CLI
 RUN wget https://github.com/vmware/govmomi/releases/download/v0.20.0/govc_linux_amd64.gz && gunzip govc_linux_amd64.gz && mv govc_linux_amd64 /usr/local/bin/govc
 RUN chmod +x /usr/local/bin/govc
 ENV GOVC_INSECURE=1
-ENV GOVC_USERNAME=root
-ENV GOVC_PASSWORD=Polycom123
-ENV GOVC_URL=https://172.21.120.10
+ENV GOVC_USERNAME=administrator@stqiu.local
+ENV GOVC_PASSWORD=Polycom\!12
+ENV GOVC_URL=https://rprm121.pctc-rprmqa.com
 ENV GOVC_INSECURE=true
 
 COPY terraform /terraform

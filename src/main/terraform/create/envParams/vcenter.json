@@ -1,0 +1,8 @@
+{
+    "vcenter_server": "172.21.120.10",
+    "vcenter_datacenter": "ha-datacenter",
+    "vcenter_cluster": "cluster01",
+    "vcenter_datastore": "datastore/ExtHDD2",
+    "vcenter_network": "private_network",
+    "vcenter_username" : "user"
+}  

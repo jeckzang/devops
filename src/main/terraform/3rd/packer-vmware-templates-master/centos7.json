@@ -1,0 +1,67 @@
+{
+  "variables": {
+    "guest_additions_mode": "disable",
+    "headless": "false",
+    "vm_name": "packer-build-centos-75",
+    "disk_size": "10000",
+    "disk_type_id": "1",
+    "memory": "1024",
+    "cpu": "1",
+    "iso_checksum_type": "sha256",
+    "iso_checksum": "38d5d51d9d100fd73df031ffd6bd8b1297ce24660dc8c13a3b8b4534a4bd291c",
+    "iso_url": "iso/CentOS-7-x86_64-Minimal-1810.iso",
+    "vcenter_server": "",
+    "vcenter_datacenter": "",
+    "vcenter_cluster": "",
+    "vcenter_datastore": "",
+    "vcenter_host": "",
+    "vcenter_network": "",
+    "vcenter_username": "",
+    "vcenter_password": ""
+  },
+  "builders": [
+    {
+      "name": "centos-75-vsphere",
+      "type": "vsphere-iso",
+      "vcenter_server": "{{ user `vcenter_server` }}",
+      "datacenter": "{{ user `vcenter_datacenter` }}",
+      "username": "{{ user `vcenter_username` }}",
+      "password": "{{ user `vcenter_password` }}",
+      "insecure_connection": true,
+      "vm_name": "{{user `vm_name`}}",
+      "host": "{{ user `vcenter_host` }}",
+      "cluster": "{{ user `vcenter_cluster` }}",
+      "datastore": "{{ user `vcenter_datastore` }}",
+      "communicator": "ssh",
+      "ssh_username": "devops",
+      "ssh_password": "devops",
+      "ssh_port": 22,
+      "boot_command": [
+        "<tab> ",
+        "inst.ks=hd:/dev/fd0:/ks.cfg ",
+        "biosdevname=0 ",
+        "net.ifnames=0 ",
+        "<enter>"
+      ],
+      "boot_wait": "10s",
+      "shutdown_command": "echo 'devops'|sudo -S /sbin/halt -h -p",
+      "guest_os_type": "centos7_64Guest",
+      "vm_version": 13,
+      "CPUs": "{{user `cpu`}}",
+      "CPU_limit": -1,
+      "RAM": "{{user `memory`}}",
+      "RAM_reserve_all": true,
+      "disk_controller_type": "lsilogic-sas",
+      "disk_size": "{{user `disk_size`}}",
+      "disk_thin_provisioned": false,
+      "network": "{{ user `vcenter_network` }}",
+      "network_card": "vmxnet3",
+      "iso_paths": [
+        "[{{ user `vcenter_datastore` }}]/iso/CentOS-7-x86_64-Minimal-1810.iso"
+      ],
+      "floppy_files": [
+        "./http/ks.cfg"
+      ]
+    }
+  ]
+}

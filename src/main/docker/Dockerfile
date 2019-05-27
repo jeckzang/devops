@@ -31,10 +31,8 @@ RUN unzip packer_${PACKER_VERSION}_linux_amd64.zip -d /usr/bin
 
 ENV PACKER_BUILDER_VSPHERE_VERSION=v2.3
 RUN wget https://github.com/jetbrains-infra/packer-builder-vsphere/releases/download/${PACKER_BUILDER_VSPHERE_VERSION}/packer-builder-vsphere-iso.linux
-RUN mkdir -p ${HOME}/packer.d/plugins
-RUN mv packer-builder-vsphere-iso.linux ${HOME}/packer.d/plugins
-
-
+RUN mv packer-builder-vsphere-iso.linux /usr/bin/
+RUN chmod +x /usr/bin/packer-builder-vsphere-iso.linux
 
 # vSphere CLI
 RUN wget https://github.com/vmware/govmomi/releases/download/v0.20.0/govc_linux_amd64.gz && gunzip govc_linux_amd64.gz && mv govc_linux_amd64 /usr/local/bin/govc
@@ -45,6 +43,12 @@ ENV GOVC_PASSWORD=Polycom\!12
 ENV GOVC_URL=https://rprm121.pctc-rprmqa.com
 ENV GOVC_INSECURE=true
 
+# install tools
+COPY softwares /softwares
+WORKDIR /softwares
+RUN chmod +x *
+RUN ./VMware-ovftool-4.3.0-7948156-lin.x86_64.bundle --eulas-agreed --required
+
 COPY terraform /terraform
 WORKDIR /terraform/create
 RUN chmod +x *.sh
@@ -53,7 +57,7 @@ RUN terraform init
 ENV TF_LOG=DEBUG
 ENV TF_LOG_PATH=/var/log/terraform.log
 
-
+WORKDIR /terraform/3rd/packer-vmware-templates-master
 
 
 # ansible

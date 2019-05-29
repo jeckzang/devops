@@ -1,0 +1,18 @@
+---
+- name: test
+  debug:
+     msg: "test"
+- name: "test connection"
+  ping:
+
+- name: "Download VMDK"
+  fetch:
+     src: /vmfs/volumes/ExtHDD2/packer-build-centos-75/packer-build-centos-75.vmdk
+     dest: files/vm-disks/
+     flat: yes
+
+- name: "Download FLAT VMDK"
+  fetch: 
+     src: /vmfs/volumes/ExtHDD2/packer-build-centos-75/packer-build-centos-75-flat.vmdk
+     dest: files/vm-disks/
+     flat: yes

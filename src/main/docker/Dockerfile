@@ -35,12 +35,14 @@ RUN mv packer-builder-vsphere-iso.linux /usr/bin/
 RUN chmod +x /usr/bin/packer-builder-vsphere-iso.linux
 
 # vSphere CLI
+ENV VCENTER_HOST=rprm121.pctc-rprmqa.com
+ENV VSPHERE_SERVER=172.21.120.10
 RUN wget https://github.com/vmware/govmomi/releases/download/v0.20.0/govc_linux_amd64.gz && gunzip govc_linux_amd64.gz && mv govc_linux_amd64 /usr/local/bin/govc
 RUN chmod +x /usr/local/bin/govc
 ENV GOVC_INSECURE=1
 ENV GOVC_USERNAME=administrator@stqiu.local
 ENV GOVC_PASSWORD=Polycom\!12
-ENV GOVC_URL=https://rprm121.pctc-rprmqa.com
+ENV GOVC_URL=https://${VCENTER_HOST}
 ENV GOVC_INSECURE=true
 
 # install tools
@@ -49,19 +51,29 @@ WORKDIR /softwares
 RUN chmod +x *
 RUN ./VMware-ovftool-4.3.0-7948156-lin.x86_64.bundle --eulas-agreed --required
 
-COPY terraform /terraform
-WORKDIR /terraform/create
+# ansible
+RUN pip3 install ansible
+
+# install ssh and generate Keys
+RUN apt-get install -y ssh
+RUN apt-get install -y sshpass
+
+COPY infrastructure /infrastructure
+
+ENV ANSIBLE_HOST_KEY_CHECKING=False
+RUN mv /infrastructure/createKubernetesCluster/ansible/vcenter/ansible.cfg ~/.ansible.cfg
+
+WORKDIR /infrastructure/createKubernetesCluster
 RUN chmod +x *.sh
 RUN terraform init
 
 ENV TF_LOG=DEBUG
 ENV TF_LOG_PATH=/var/log/terraform.log
 
-WORKDIR /terraform/3rd/packer-vmware-templates-master
+WORKDIR /infrastructure/createKubernetesCluster/ansible/vcenter
 
 
-# ansible
-#RUN pip3 install ansible
+
 
 
 

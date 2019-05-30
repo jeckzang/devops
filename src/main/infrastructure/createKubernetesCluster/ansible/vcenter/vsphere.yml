@@ -1,7 +1,5 @@
 ---
 - name: Deploy VM template on VCenter
-  hosts: all
-  remote_user: root
 
   roles:
     - common

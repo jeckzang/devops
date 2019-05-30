@@ -82,6 +82,30 @@ Build 'centos-75-vsphere' finished.
 
 # Ansible
 1. install Asible
+RUN pip3 install ansible
+
+2. install ssh tools
+RUN apt-get install -y ssh
+RUN apt-get install -y sshpass
+if your server has FQDN, you could upload key to target server and no need password.
+# Create an SSH Key
+RUN ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa
+# Copy key to remote host
+RUN ssh-copy-id ${REMOTE_HOST} 
+or copy to remote server configured ssh authorized_keys location
+
+3. develop ansible play book
+3.1 search command by https://docs.ansible.com/ansible/latest/
+
+4. issues
+
+4.1 copy command could not set remote temp dir, so if your remote server $HOME/.ansible has no enough space to store temp file, then task will fail.
+fatal: [172.21.120.10]: FAILED! => {"msg": "failed to transfer file to /infrastructure/createKubernetesCluster/ansible/vcenter/files/vm-disks/packer-build-centos-75-flat.vmdk /.ansible/tmp/ansible-tmp-1559123731.1157498-250837879532639/source:\n\ndd: writing '/.ansible/tmp/ansible-tmp-1559123731.1157498-250837879532639/source': No space left on device\n0+1883 records in\n0+1882 records out\n"}
+
+
+
+
+
 
 
 

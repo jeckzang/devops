@@ -57,10 +57,13 @@ RUN pip3 install ansible
 # install ssh and generate Keys
 RUN apt-get install -y ssh
 RUN apt-get install -y sshpass
+# # Create an SSH Key
+# RUN ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa
+# # Copy key to remote host
+# RUN ssh-copy-id ${REMOTE_HOST}
+
 
 COPY infrastructure /infrastructure
-
-ENV ANSIBLE_HOST_KEY_CHECKING=False
 RUN mv /infrastructure/createKubernetesCluster/ansible/vcenter/ansible.cfg ~/.ansible.cfg
 
 WORKDIR /infrastructure/createKubernetesCluster

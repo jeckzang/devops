@@ -10,9 +10,41 @@
      src: /vmfs/volumes/ExtHDD2/packer-build-centos-75/packer-build-centos-75.vmdk
      dest: files/vm-disks/
      flat: yes
+  tags:
+    - download
 
 - name: "Download FLAT VMDK"
   fetch: 
      src: /vmfs/volumes/ExtHDD2/packer-build-centos-75/packer-build-centos-75-flat.vmdk
      dest: files/vm-disks/
      flat: yes
+  tags:
+    - download
+
+- name: "Create template DIR"
+  file:
+    path: /vmfs/volumes/ExtHDD2/disk-templates
+    state: directory
+    mode: u=rw,g=r,o=r
+  tags:
+    - upload
+
+- name: "Copy VMDK to template DIR"
+  copy:
+    src: files/vm-disks/packer-build-centos-75.vmdk
+    dest: /vmfs/volumes/ExtHDD2/disk-templates/packer-build-centos-75.vmdk
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
+  tags:
+    - upload
+
+- name: "Copy FLAT VMDK to template DIR"
+  copy:
+    src: files/vm-disks/packer-build-centos-75-flat.vmdk
+    dest: /vmfs/volumes/ExtHDD2/disk-templates/packer-build-centos-75-flat.vmdk
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
+  tags:
+    - upload

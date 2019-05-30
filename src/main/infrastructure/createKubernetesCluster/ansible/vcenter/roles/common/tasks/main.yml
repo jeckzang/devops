@@ -48,3 +48,21 @@
     mode: u=rw,g=r,o=r
   tags:
     - upload
+
+- name: "Create new VM DIR"
+  file:
+    path: /vmfs/volumes/ExtHDD2/kubernetes-master
+    state: directory
+    mode: u=rw,g=r,o=r
+  tags:
+    - create
+
+- name: "Copy FLAT VMDK to new VM"
+  command: cp /vmfs/volumes/ExtHDD2/disk-templates/packer-build-centos-75-flat.vmdk /vmfs/volumes/ExtHDD2/kubernetes-master/
+  tags:
+    - create
+
+- name: "Copy VMDK to new VM"
+  command: cp /vmfs/volumes/ExtHDD2/disk-templates/packer-build-centos-75.vmdk /vmfs/volumes/ExtHDD2/kubernetes-master/
+  tags:
+    - create

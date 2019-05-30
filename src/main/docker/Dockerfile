@@ -68,12 +68,12 @@ RUN mv /infrastructure/createKubernetesCluster/ansible/vcenter/ansible.cfg ~/.an
 
 WORKDIR /infrastructure/createKubernetesCluster
 RUN chmod +x *.sh
+
+WORKDIR /infrastructure/createKubernetesCluster/terraform
 RUN terraform init
 
 ENV TF_LOG=DEBUG
 ENV TF_LOG_PATH=/var/log/terraform.log
-
-WORKDIR /infrastructure/createKubernetesCluster/ansible/vcenter
 
 
 

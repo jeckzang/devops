@@ -62,7 +62,7 @@ resource "vsphere_virtual_machine" "vm" {
   guest_id = "centos7_64Guest"
   wait_for_guest_net_timeout = 0
 
-  scsi_type = "lsilogic"
+  scsi_type = "lsilogic-sas"
 
   network_interface {
     network_id = "${data.vsphere_network.network.id}"

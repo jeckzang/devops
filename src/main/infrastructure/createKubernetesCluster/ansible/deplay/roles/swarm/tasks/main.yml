@@ -1,0 +1,20 @@
+---
+- name: configuration swarm
+  debug:
+     msg: "configuration swarm"
+- name: "Test master connection"
+  ping:
+
+- name: Change IP address
+  replace:
+    path: /etc/network/interfaces
+    regexp: '{{ template_server["ip_address"] }}'
+    replace: '{{ swarm_master["ip_address"] }}'
+  tags:
+    - master 
+
+- name: reboot the master
+  reboot:
+    reboot_timeout: 10
+  tags:
+    - master 

@@ -1,6 +1,6 @@
 ---
 - name: Configuration kubernetes master
-  hosts: template_server
+  hosts: centos_template_server
   remote_user: root
   vars:
     - template_server:

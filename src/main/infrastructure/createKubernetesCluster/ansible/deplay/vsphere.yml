@@ -1,6 +1,6 @@
 ---
 - name: Deploy VM template on VCenter
-  hosts: all
+  hosts: vsphere_server
   remote_user: root
 
   roles:

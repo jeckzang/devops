@@ -1,0 +1,24 @@
+---
+- name: Configuration swarm master
+  hosts: ubuntu_template_server
+  remote_user: devops
+  become: true
+  become_user: root
+  become_method: sudo
+  vars:
+    - template_server:
+        ip_address: "172.21.120.1"
+  
+    - swarm_master:
+        ip_address: "172.21.120.30"
+
+    - swarm_workers:
+        worker1:
+          ip_address: "172.21.120.31"
+        worker2:
+          ip_address: "172.21.120.32"
+
+  roles:
+    - role: swarm      
+      tags:
+        - master

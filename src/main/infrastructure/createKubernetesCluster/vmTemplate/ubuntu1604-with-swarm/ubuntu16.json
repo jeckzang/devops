@@ -1,0 +1,85 @@
+{
+  "variables": {
+    "guest_additions_mode": "disable",
+    "headless": "false",
+    "vm_name": "packer-build-ubuntu-1604",
+    "disk_size": "10000",
+    "disk_type_id": "1",
+    "memory": "1024",
+    "cpu": "1",
+    "iso_checksum_type": "sha256",
+    "iso_checksum": "16afb1375372c57471ea5e29803a89a5a6bd1f6aabea2e5e34ac1ab7eb9786ac",
+    "iso_url": "iso/ubuntu-16.04.6-server-amd64.iso",
+    "vcenter_server": "",
+    "vcenter_datacenter": "",
+    "vcenter_cluster": "",
+    "vcenter_datastore": "",
+    "vcenter_host": "",
+    "vcenter_network": "",
+    "vcenter_username": "",
+    "vcenter_password": ""
+  },
+  "builders": [
+    {
+      "name": "ubuntu-1604-vsphere",
+      "type": "vsphere-iso",
+      "vcenter_server": "{{ user `vcenter_server` }}",
+      "datacenter": "{{ user `vcenter_datacenter` }}",
+      "username": "{{ user `vcenter_username` }}",
+      "password": "{{ user `vcenter_password` }}",
+      "insecure_connection": true,
+      "vm_name": "{{user `vm_name`}}",
+      "host": "{{ user `vcenter_host` }}",
+      "cluster": "{{ user `vcenter_cluster` }}",
+      "datastore": "{{ user `vcenter_datastore` }}",
+      "communicator": "ssh",
+      "ssh_username": "devops",
+      "ssh_password": "devops",
+      "ssh_port": 22,
+      "boot_command": [
+        "<enter><wait><f6><wait><esc><wait>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+        "<bs><bs><bs>",
+        "/install/vmlinuz",
+        " initrd=/install/initrd.gz",
+        " priority=critical",
+        " locale=en_US",
+        " file=/media/preseed.cfg",
+        "<enter>"
+      ],
+      "boot_wait": "10s",
+      "shutdown_command": "echo 'devops'|sudo -S /sbin/halt -h -p",
+      "guest_os_type": "ubuntu64Guest",
+      "vm_version": 13,
+      "CPUs": "{{user `cpu`}}",
+      "CPU_limit": -1,
+      "RAM": "{{user `memory`}}",
+      "RAM_reserve_all": true,
+      "disk_controller_type": "lsilogic-sas",
+      "disk_size": "{{user `disk_size`}}",
+      "disk_thin_provisioned": false,
+      "network": "{{ user `vcenter_network` }}",
+      "network_card": "vmxnet3",
+      "iso_paths": [
+        "[{{ user `vcenter_datastore` }}]/iso/ubuntu-16.04.6-server-amd64.iso"
+      ],
+      "floppy_files": [
+        "./http/preseed.cfg"
+      ]
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "execute_command": "echo 'devops' | sudo -S -E bash ",
+      "script": "scripts/install_and_config_swarm.sh"
+    }
+  ]
+}

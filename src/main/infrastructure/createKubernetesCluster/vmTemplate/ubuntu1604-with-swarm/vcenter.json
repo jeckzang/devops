@@ -1,0 +1,10 @@
+{
+  "vcenter_server": "rprm121.pctc-rprmqa.com",
+  "vcenter_datacenter": "jeck",
+  "vcenter_cluster": "/jeck/host/172.21.120.10",
+  "vcenter_datastore": "ExtHDD2",
+  "vcenter_host": "172.21.120.10",
+  "vcenter_network": "network/VM Network",
+  "vcenter_username": "administrator@stqiu.local",
+  "vcenter_password": "Polycom!12"
+}

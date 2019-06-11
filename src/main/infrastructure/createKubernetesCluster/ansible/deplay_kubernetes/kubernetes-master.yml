@@ -1,0 +1,21 @@
+---
+- name: Configuration kubernetes master
+  hosts: template_server
+  remote_user: root
+  vars:
+    - template_server:
+        ip_address: "172.21.120.1"
+  
+    - kubernetes_master:
+        ip_address: "172.21.120.2"
+
+    - kubernetes_workers:
+        worker1:
+          ip_address: "172.21.120.4"
+        worker2:
+          ip_address: "172.21.120.5"
+
+  roles:
+    - role: kubernetes      
+      tags:
+        - master

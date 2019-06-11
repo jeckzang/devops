@@ -64,7 +64,7 @@ RUN apt-get install -y sshpass
 
 
 COPY infrastructure /infrastructure
-RUN mv /infrastructure/createKubernetesCluster/ansible/vcenter/ansible.cfg ~/.ansible.cfg
+RUN mv /infrastructure/createKubernetesCluster/ansible/deplay_kubernetes/ansible.cfg ~/.ansible.cfg
 
 WORKDIR /infrastructure/createKubernetesCluster
 RUN chmod +x *.sh

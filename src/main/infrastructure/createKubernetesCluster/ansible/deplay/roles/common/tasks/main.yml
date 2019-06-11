@@ -11,7 +11,7 @@
      dest: files/vm-disks/
      flat: yes
   tags:
-    - download
+    - download-centos
 
 - name: "Download FLAT VMDK"
   fetch: 
@@ -19,7 +19,7 @@
      dest: files/vm-disks/
      flat: yes
   tags:
-    - download
+    - download-centos
 
 - name: "Create template DIR"
   file:
@@ -27,7 +27,7 @@
     state: directory
     mode: u=rw,g=r,o=r
   tags:
-    - upload
+    - upload-centos
 
 - name: "Copy VMDK to template DIR"
   copy:
@@ -37,7 +37,7 @@
     group: root
     mode: u=rw,g=r,o=r
   tags:
-    - upload
+    - upload-centos
 
 - name: "Copy FLAT VMDK to template DIR"
   copy:
@@ -47,7 +47,7 @@
     group: root
     mode: u=rw,g=r,o=r
   tags:
-    - upload
+    - upload-centos
 
 - name: "Create new VM DIR"
   file:
@@ -55,14 +55,112 @@
     state: directory
     mode: u=rw,g=r,o=r
   tags:
-    - create
+    - create-kubernetes-master
 
 - name: "Copy FLAT VMDK to new VM"
   command: cp /vmfs/volumes/ExtHDD2/disk-templates/packer-build-centos-75-flat.vmdk /vmfs/volumes/ExtHDD2/kubernetes-master/
   tags:
-    - create
+    - create-kubernetes-master
 
 - name: "Copy VMDK to new VM"
   command: cp /vmfs/volumes/ExtHDD2/disk-templates/packer-build-centos-75.vmdk /vmfs/volumes/ExtHDD2/kubernetes-master/
   tags:
-    - create
+    - create-kubernetes-master
+
+- name: "Download VMDK"
+  fetch:
+     src: /vmfs/volumes/ExtHDD2/packer-build-ubuntu-1604/packer-build-ubuntu-1604.vmdk
+     dest: files/vm-disks/
+     flat: yes
+  tags:
+    - download-ubuntu
+
+- name: "Download FLAT VMDK"
+  fetch: 
+     src: /vmfs/volumes/ExtHDD2/packer-build-ubuntu-1604/packer-build-ubuntu-1604-flat.vmdk
+     dest: files/vm-disks/
+     flat: yes
+  tags:
+    - download-ubuntu
+
+- name: "Create template DIR"
+  file:
+    path: /vmfs/volumes/ExtHDD2/disk-templates
+    state: directory
+    mode: u=rw,g=r,o=r
+  tags:
+    - upload-ubuntu
+
+- name: "Copy VMDK to template DIR"
+  copy:
+    src: files/vm-disks/packer-build-ubuntu-1604.vmdk
+    dest: /vmfs/volumes/ExtHDD2/disk-templates/packer-build-ubuntu-1604.vmdk
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
+  tags:
+    - upload-ubuntu
+
+- name: "Copy FLAT VMDK to template DIR"
+  copy:
+    src: files/vm-disks/packer-build-ubuntu-1604-flat.vmdk
+    dest: /vmfs/volumes/ExtHDD2/disk-templates/packer-build-ubuntu-1604-flat.vmdk
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
+  tags:
+    - upload-ubuntu
+
+- name: "Create new VM DIR"
+  file:
+    path: /vmfs/volumes/ExtHDD2/swarm-master
+    state: directory
+    mode: u=rw,g=r,o=r
+  tags:
+    - create-swarm-master
+
+- name: "Copy FLAT VMDK to new VM"
+  command: cp /vmfs/volumes/ExtHDD2/disk-templates/packer-build-ubuntu-1604-flat.vmdk /vmfs/volumes/ExtHDD2/swarm-master/
+  tags:
+    - create-swarm-master
+
+- name: "Copy VMDK to new VM"
+  command: cp /vmfs/volumes/ExtHDD2/disk-templates/packer-build-ubuntu-1604.vmdk /vmfs/volumes/ExtHDD2/swarm-master/
+  tags:
+    - create-swarm-master
+
+- name: "Create new VM DIR"
+  file:
+    path: /vmfs/volumes/ExtHDD2/swarm-work1
+    state: directory
+    mode: u=rw,g=r,o=r
+  tags:
+    - create-swarm-work1
+
+- name: "Copy FLAT VMDK to new VM"
+  command: cp /vmfs/volumes/ExtHDD2/disk-templates/packer-build-ubuntu-1604-flat.vmdk /vmfs/volumes/ExtHDD2/swarm-work1/
+  tags:
+    - create-swarm-work1
+
+- name: "Copy VMDK to new VM"
+  command: cp /vmfs/volumes/ExtHDD2/disk-templates/packer-build-ubuntu-1604.vmdk /vmfs/volumes/ExtHDD2/swarm-work1/
+  tags:
+    - create-swarm-work1
+
+- name: "Create new VM DIR"
+  file:
+    path: /vmfs/volumes/ExtHDD2/swarm-work2
+    state: directory
+    mode: u=rw,g=r,o=r
+  tags:
+    - create-swarm-work2
+
+- name: "Copy FLAT VMDK to new VM"
+  command: cp /vmfs/volumes/ExtHDD2/disk-templates/packer-build-ubuntu-1604-flat.vmdk /vmfs/volumes/ExtHDD2/swarm-work2/
+  tags:
+    - create-swarm-work2
+
+- name: "Copy VMDK to new VM"
+  command: cp /vmfs/volumes/ExtHDD2/disk-templates/packer-build-ubuntu-1604.vmdk /vmfs/volumes/ExtHDD2/swarm-work2/
+  tags:
+    - create-swarm-work2

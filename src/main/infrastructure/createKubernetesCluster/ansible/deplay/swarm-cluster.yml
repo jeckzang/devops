@@ -19,6 +19,4 @@
           ip_address: "172.21.120.32"
 
   roles:
-    - role: swarm      
-      tags:
-        - master
+    - role: swarm  

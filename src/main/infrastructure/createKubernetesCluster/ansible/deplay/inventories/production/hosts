@@ -1,8 +1,8 @@
 [vsphere_server]
-172.21.120.10
+172.21.120.10 ansible_ssh_pass=Polycom123
 
 [centos_template_server]
-172.21.120.1
+172.21.120.1 ansible_ssh_pass=root
 
 [ubuntu_template_server]
 172.21.120.1 ansible_connection="ssh" ansible_ssh_user='devops' ansible_ssh_pass='devops' ansible_become_user='root' ansible_become_pass='devops'

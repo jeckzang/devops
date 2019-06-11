@@ -13,8 +13,24 @@
   tags:
     - master 
 
-- name: reboot the master
-  reboot:
-    reboot_timeout: 10
+- name: Change IP address
+  replace:
+    path: /etc/network/interfaces
+    regexp: '{{ template_server["ip_address"] }}'
+    replace: '{{ swarm_workers["worker1"]["ip_address"] }}'
   tags:
-    - master 
+    - worker1 
+
+- name: Change IP address
+  replace:
+    path: /etc/network/interfaces
+    regexp: '{{ template_server["ip_address"] }}'
+    replace: '{{ swarm_workers["worker2"]["ip_address"] }}'
+  tags:
+    - worker2  
+
+- name: reboot the server
+  reboot:
+    reboot_timeout: 10  
+  tags:
+    - reboot

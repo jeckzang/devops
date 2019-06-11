@@ -78,7 +78,7 @@
   "provisioners": [
     {
       "type": "shell",
-      "execute_command": "echo 'devops' | sudo -S -E bash ",
+      "execute_command": "echo 'devops' | sudo -S -E bash {{.Path}}",
       "script": "scripts/install_and_config_swarm.sh"
     }
   ]

@@ -34,3 +34,6 @@
     reboot_timeout: 10  
   tags:
     - reboot
+
+
+- name: john to master

@@ -71,15 +71,9 @@
         "[{{ user `vcenter_datastore` }}]/iso/ubuntu-16.04.6-server-amd64.iso"
       ],
       "floppy_files": [
-        "./http/preseed.cfg"
+        "./http/preseed.cfg",
+        "./scripts/install_and_config_swarm.sh"
       ]
-    }
-  ],
-  "provisioners": [
-    {
-      "type": "shell",
-      "execute_command": "echo 'devops' | sudo -S -E bash {{.Path}}",
-      "script": "scripts/install_and_config_swarm.sh"
     }
   ]
 }
